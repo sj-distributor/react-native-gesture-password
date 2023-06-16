@@ -2,6 +2,10 @@
 
 React native gesture password component
 
+## Demo
+
+<a href="https://raw.githubusercontent.com/Simoon-F/react-native-gesture-password/master/demo/demo.gif"><img src="https://raw.githubusercontent.com/Simoon-F/react-native-gesture-password/master/demo/demo.gif" width="360"></a>
+
 ## Installation
 
 ```sh
