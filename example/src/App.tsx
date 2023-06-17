@@ -1,45 +1,79 @@
-import * as React from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { GesturePassword } from 'react-native-gesture-password';
 
+const SIMULATE_PASSWORD = '1234';
+
 export default function App() {
-  let circleStyle, centerStyle, lineStyle;
+  const [title, setTitle] = useState<string>('Please enter your password.');
 
-  // const [isWrong, setIsWrong] = React.useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
-  // if (isWrong) {
-  //   textStyle = styles.text;
-  //   circleStyle = styles.circle;
-  //   centerStyle = styles.center;
-  //   lineStyle = styles.line;
-  // }
+  const { circleStyle, centerStyle, lineStyle } = useMemo(() => {
+    let circleStyle,
+      centerStyle,
+      lineStyle = {};
 
-  const handleRelease = (sequence: string) => {
-    console.log('handleRelease:', sequence);
+    if (isError) {
+      lineStyle = styles.line;
+      circleStyle = styles.circle;
+      centerStyle = styles.center;
+    }
+    return { circleStyle, centerStyle, lineStyle };
+  }, [isError]);
+
+  const handleTouch = () => {
+    setIsError(false);
+
+    console.log('Touch');
+  };
+
+  const handleRelease = (password: string) => {
+    if (password.length < 4) {
+      setTitle('Password length should not be less than 4.');
+
+      return setIsError(true);
+    }
+
+    if (password === SIMULATE_PASSWORD) {
+      setTitle(`Your password is: ${password}.`);
+    } else {
+      setTitle('The password you entered is incorrect');
+
+      return setIsError(true);
+    }
+
+    console.log('handleRelease:', password);
   };
 
   const handleClear = (password: string) => {
+    setIsError(false);
+
+    setTitle('Please enter your password.');
+
     console.log('handleClear:', password);
   };
 
   return (
     <View style={styles.container}>
+      <Text>{title}</Text>
       <GesturePassword
         clearTime={1000}
-        linedCircleStyle={circleStyle}
-        linedCenterStyle={centerStyle}
+        linedDotCircleStyle={circleStyle}
+        linedDotCenterStyle={centerStyle}
         lineStyle={lineStyle}
-        onRelease={handleRelease}
+        onTouch={handleTouch}
         onClear={handleClear}
+        onRelease={handleRelease}
       />
     </View>
   );
 }
 
-const COLOR_RED = 'rgba(252, 13, 27, 1)';
-const COLOR_RED_02 = 'rgba(252, 13, 27, 0.2)';
-const COLOR_RED_04 = 'rgba(252, 13, 27, 0.4)';
+const COLOR_RED = 'rgba(243, 101, 92, 1)';
+const COLOR_RED_02 = 'rgba(243, 101, 92, 0.2)';
+const COLOR_RED_04 = 'rgba(243, 101, 92, 0.4)';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,15 +81,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-  view: {
-    flex: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
+  line: {
+    backgroundColor: COLOR_RED,
   },
   circle: {
     backgroundColor: COLOR_RED_02,
@@ -63,11 +90,5 @@ const styles = StyleSheet.create({
   },
   center: {
     backgroundColor: COLOR_RED,
-  },
-  line: {
-    backgroundColor: COLOR_RED,
-  },
-  text: {
-    color: COLOR_RED,
   },
 });
