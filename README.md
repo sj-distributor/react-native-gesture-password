@@ -9,7 +9,7 @@ React native gesture password component
 ## Installation
 
 ```sh
-yanr add react-native-gesture-password
+yarn add react-native-gesture-password
 ```
 
 ## Usage
