@@ -45,6 +45,7 @@
   },
   "homepage": "https://github.com/Simoon-F/react-native-gesture-password#readme",
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
