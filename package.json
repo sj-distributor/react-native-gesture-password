@@ -1,6 +1,6 @@
 {
   "name": "@sj-distributor/react-native-gesture-password",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "React native gesture password component",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
