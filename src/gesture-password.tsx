@@ -9,10 +9,10 @@ import { GestureResponderEvent, PanResponder, View } from 'react-native';
 import { Line } from './line';
 import { Dot } from './dot';
 import {
-  CLEAR_TIME,
-  DIMENSION_HEIGHT,
-  DIMENSION_WIDTH,
-  distanceOfPoint,
+  DEFAULT_CLEAR_TIME,
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+  calculateDistanceBetweenPoints,
 } from './utils';
 import style from './styles';
 import type { IGesturePasswordProps, ILines, IPoint, IPoints } from './types';
@@ -30,25 +30,25 @@ const DEFAULT_POINTS: IPoints = {
 };
 
 const GesturePassword: React.FC<IGesturePasswordProps> = ({
-  width = DIMENSION_WIDTH,
-  height = DIMENSION_HEIGHT,
-  clearTime = CLEAR_TIME,
+  width = DEFAULT_WIDTH,
+  height = DEFAULT_HEIGHT,
+  clearTime = DEFAULT_CLEAR_TIME,
   lineStyle,
-  circleStyle,
-  centerStyle,
-  linedCircleStyle,
-  linedCenterStyle,
+  dotCircleStyle,
+  dotCenterStyle,
+  linedDotCircleStyle,
+  linedDotCenterStyle,
   onTouch,
   onClear,
   onRelease,
 }) => {
-  const containerRef = useRef<View>(null);
-
   const pageXRef = useRef<number>(0);
 
   const pageYRef = useRef<number>(0);
 
   const passwordRef = useRef<string>('');
+
+  const containerRef = useRef<View>(null);
 
   const [lines, setLines] = useState<ILines[]>([]);
 
@@ -78,7 +78,8 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
         Object.entries(points).forEach(([id, point]) => {
           if (!point.lined && point.radius && point.center) {
             const lined =
-              distanceOfPoint(current, point.center) <= point.radius;
+              calculateDistanceBetweenPoints(current, point.center) <=
+              point.radius;
 
             if (lined && point.center) {
               point.lined = true;
@@ -111,14 +112,12 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
 
     onClear && onClear(passwordRef.current);
 
-    const newPoints: IPoints = {};
-
-    for (const id in points) {
-      newPoints[id] = {
-        ...points[id],
-        lined: false,
-      };
-    }
+    const newPoints = Object.fromEntries(
+      Object.entries(points).map(([id, point]) => [
+        id,
+        { ...point, lined: false },
+      ])
+    );
 
     setLines([]);
     setPoints(newPoints);
@@ -167,12 +166,11 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
     };
   }, []);
 
-  const reportCenter = useCallback(
+  const onChange = useCallback(
     (id: string, center: IPoint, radius: number) => {
       if (['D', 'E', 'F'].includes(id)) {
         center.y += height / 3;
-      }
-      if (['G', 'H', 'I'].includes(id)) {
+      } else if (['G', 'H', 'I'].includes(id)) {
         center.y += (height * 2) / 3;
       }
 
@@ -189,6 +187,27 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
     [height]
   );
 
+  const renderLine = () => {
+    return (
+      <>
+        {lines.map((item: ILines) => {
+          if (item.end) {
+            return (
+              <Line
+                key={item.id}
+                endPoint={item.end}
+                startPoint={item.start}
+                customStyles={lineStyle}
+              />
+            );
+          }
+
+          return null;
+        })}
+      </>
+    );
+  };
+
   const renderDot = (id: string) => {
     const point = points[id];
 
@@ -197,11 +216,11 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
         id={id}
         key={id}
         lined={point.lined}
-        reportCenter={reportCenter}
-        circleStyle={circleStyle}
-        centerStyle={centerStyle}
-        linedCircleStyle={linedCircleStyle}
-        linedCenterStyle={linedCenterStyle}
+        onChange={onChange}
+        dotCircleStyle={dotCircleStyle}
+        dotCenterStyle={dotCenterStyle}
+        linedDotCircleStyle={linedDotCircleStyle}
+        linedDotCenterStyle={linedDotCenterStyle}
       />
     );
   };
@@ -213,21 +232,7 @@ const GesturePassword: React.FC<IGesturePasswordProps> = ({
       collapsable={false}
       {...panResponder.panHandlers}
     >
-      {lines.length > 0 &&
-        lines.map((item: ILines) => {
-          if (item.end) {
-            return (
-              <Line
-                tail
-                key={item.id}
-                end={item.end}
-                start={item.start}
-                style={lineStyle}
-              />
-            );
-          }
-          return null;
-        })}
+      {renderLine()}
 
       <View style={style.row}>
         {['A', 'B', 'C'].map((id) => renderDot(id))}
