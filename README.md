@@ -14,11 +14,7 @@ yanr add react-native-gesture-password
 
 ## Usage
 
-```js
-import GesturePassword from 'react-native-gesture-password';
-
-// ...
-```
+[Click to view example](https://github.com/sj-distributor/react-native-gesture-password/blob/master/example/src/App.tsx)
 
 ## Contributing
 
