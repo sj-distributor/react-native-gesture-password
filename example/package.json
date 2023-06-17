@@ -2,7 +2,6 @@
   "name": "react-native-gesture-password-example",
   "description": "Example app for react-native-gesture-password",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
