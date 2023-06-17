@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-gesture-password": ["./src/index"]
+      "@sj-distributor/react-native-gesture-password": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

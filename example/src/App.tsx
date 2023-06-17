@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { StyleSheet, Text, View } from 'react-native';
-import { GesturePassword } from 'react-native-gesture-password';
+import { GesturePassword } from '@sj-distributor/react-native-gesture-password';
 
 const SIMULATE_PASSWORD = '1234';
 
